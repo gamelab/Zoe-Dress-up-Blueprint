@@ -1,0 +1,30 @@
+{
+    "name": "ZoeDressUpGame",
+    "filenameBase": "zoedressup",
+    "version": "1.0.0",
+    "description": "A HTML 5 Dress up game Blueprint helping developers to learn how to use Kiwi.JS and a way of outlining a dressup game.",
+    "author": "Gamelab",
+    "logo": "",
+
+    "homepage": "http://kiwijs.org/",
+    "bugs": "https://github.com/gamelab/Dressup-Blueprint/issues",
+    "license": "MIT",
+    "licenseUrl": "",
+
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+
+
+    "main": "build/zoedressup-1.0.0.js",
+
+    "dependencies": {},
+    "devDependencies": {
+        "grunt": "~0.4.x",
+        "grunt-contrib-uglify": "0.2.x",
+        "grunt-contrib-copy":  "0.4.x",
+        "grunt-contrib-concat" : "latest",
+        "grunt-contrib-connect": "~0.3.0"
+    }
+}
