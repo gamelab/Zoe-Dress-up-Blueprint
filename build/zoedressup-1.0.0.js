@@ -236,6 +236,20 @@ Play.prototype.createCustomButtons = function() {
     this.showButton = new Kiwi.GameObjects.Sprite(this, this.textures.cameraBtn, 444, 914);
     this.addChild(this.showButton);
     this.showButton.input.onUp.add(this.showSaveButtons, this);
+
+
+    //Previous/Next Button
+    this.prevButton = new Kiwi.GameObjects.Sprite(this, this.textures.prevBtn, 0, 0);
+    this.nextButton = new Kiwi.GameObjects.Sprite(this, this.textures.nextBtn, 0, 0);
+
+    this.prevButton.y = this.game.stage.height - this.prevButton.height - 10;
+    this.nextButton.y = this.game.stage.height - this.nextButton.height - 10;
+
+    this.prevButton.x = 10;
+    this.nextButton.x = this.game.stage.width - this.nextButton.width - 10;
+
+    this.addChild(this.prevButton);
+    this.addChild(this.nextButton);
 }
 
 
@@ -279,6 +293,11 @@ Play.prototype.showCreateButtons = function() {
     this.showButton.active = true;
     this.showButton.visible = true;
 
+    this.nextButton.visible = true;
+    this.prevButton.visible = true;
+    this.nextButton.active = true;
+    this.prevButton.active = true;
+
     //Show the current buttons
     this.printButton.visible = false;
     this.printButton.active = false;
@@ -302,6 +321,11 @@ Play.prototype.showSaveButtons = function(show) {
     this.resetButton.visible = false;
     this.showButton.active = false;
     this.showButton.visible = false;
+
+    this.nextButton.visible = false;
+    this.prevButton.visible = false;
+    this.nextButton.active = false;
+    this.prevButton.active = false;
 
     //Show the current buttons
     this.printButton.visible = true;
@@ -461,7 +485,6 @@ Dog.preload = function() {
 
 
 	//Dog Graphics
-	this.addImage('face', 'assets/img/character/dog/face.png', false);
 
 	this.addSpriteSheet('eyebrows', 'assets/img/character/dog/eyebrows.png', 387, 472, false);
 	this.addSpriteSheet('eyes', 'assets/img/character/dog/eyes.png', 406, 536, false);
@@ -470,19 +493,94 @@ Dog.preload = function() {
 	//The Body
 	this.addImage('base', 'assets/img/character/dog/outfit/base.png', false);
 	
+	//Create the background
+	this.background = new Kiwi.GameObjects.StaticImage(this, this.textures['dog-bg']);
+	this.addChild(this.background);
+
 	//Called after we have loaded our assets	
 	Play.prototype.preload.call(this);
 
 }
 
+
+Dog.loadComplete = function() {
+	Play.prototype.loadComplete.call(this);
+
+	//When the loading has been completed, we need to destory the background and re-create it in the create stage.
+	//This is because after the loadComplete method executes, Kiwi then remakes the texture library and that process will destory any currently used images.
+	this.background.exists = false;
+	this.background.visible = false;
+}
+
+
+//Controls the creation the dressup elements and the buttons to control them.
 Dog.createDressup = function() {
 
     //Create the background. 
-    //In this example we do not have a background, so we will skip this step.
-    this.background = new Kiwi.GameObjects.StaticImage(this, this.textures.bg, 0, 0);
-    this.addChild(this.background);
+    this.background = new Kiwi.GameObjects.StaticImage(this, this.textures['dog-bg'], 0, 0);
 
+
+    //We are going to store all of the dress up parts inside this array, to keep track of them.
+    this.dressUpElements = [];
+    this.buttons = [];
+
+    //The Base
+    this.base = new Kiwi.GameObjects.StaticImage(this, this.textures.base, 0, 0);
+
+    //Changable Items
+    this.eyes = new Option(this, this.textures.eyes, 0, 0);
+    this.eyebrows = new Option(this, this.textures.eyebrows, 0, 0);
+    this.mouth = new Option(this, this.textures.mouth, 0, 0);
+
+    //Add the dress up elements to the array
+    this.dressUpElements = [this.eyes, this.eyebrows, this.mouth];
+
+    //Create the buttons
+    this.createButton( this.textures.eyebrowsBtn, 10, this.eyebrows);
+    this.createButton( this.textures.eyesBtn, 121, this.eyes);
+    this.createButton( this.textures.mouthBtn, 232, this.mouth);
+
+
+    //Add to the stage.
+    this.addChild(this.background);
+    this.addChild(this.base);
+
+    for(var i = 0; i < this.dressUpElements.length; i++) {
+    	this.addChild( this.dressUpElements[i] );
+    }
+
+    for(var i = 0; i < this.buttons.length; i++) {
+    	this.addChild( this.buttons[i] );
+    }
 }
+
+
+//Handles the creation of a button to switch the dressup item
+Dog.createButton = function(btnTexture, y, dressUpItem) {
+	var ele = new Kiwi.GameObjects.Sprite(this, btnTexture, 10, y);
+	this.buttons.push(ele);
+	ele.input.onUp.add(dressUpItem.next, dressUpItem);
+}
+
+
+//This custom 
+Dog.createCustomButtons = function() {
+	//Call the Play states createCustomButtons method, this will ensure that the buttons are created still.
+	Play.prototype.createCustomButtons.call(this);
+
+	//Apply input events to the next and previous buttons
+	this.nextButton.input.onUp.add(function() {
+		this.game.states.switchState('ZoeFriend');
+	}, this);
+
+
+	this.prevButton.input.onUp.add(function() {
+		this.game.states.switchState('Dude');
+	}, this);
+}
+
+
+
 var Dude = new Play('Dude');
 
 Dude.preload = function() {
@@ -499,19 +597,92 @@ Dude.preload = function() {
 	this.addImage('base', 'assets/img/character/dude/outfit/base.png', false);
 	this.addImage('outfit-1', 'assets/img/character/dude/outfit/0.png', false);
 	
+	//Create the background
+	this.background = new Kiwi.GameObjects.StaticImage(this, this.textures['dude-bg']);
+	this.addChild(this.background);
+
 	//Called after we have loaded our assets	
 	Play.prototype.preload.call(this);
 
 }
 
+
+Dude.loadComplete = function() {
+	Play.prototype.loadComplete.call(this);
+
+	//When the loading has been completed, we need to destory the background and re-create it in the create stage.
+	//This is because after the loadComplete method executes, Kiwi then remakes the texture library and that process will destory any currently used images.
+	this.background.exists = false;
+	this.background.visible = false;
+}
+
+
+//Controls the creation the dressup elements and the buttons to control them.
 Dude.createDressup = function() {
 
     //Create the background. 
-    //In this example we do not have a background, so we will skip this step.
-    this.background = new Kiwi.GameObjects.StaticImage(this, this.textures.bg, 0, 0);
-    this.addChild(this.background);
+    this.background = new Kiwi.GameObjects.StaticImage(this, this.textures['dude-bg'], 0, 0);
 
+
+    //We are going to store all of the dress up parts inside this array, to keep track of them.
+    this.dressUpElements = [];
+    this.buttons = [];
+
+    //Changable Items
+    this.face = new Option(this, this.textures.face, 0, 0);
+    this.eyes = new Option(this, this.textures.eyes, 0, 0);
+    this.eyebrows = new Option(this, this.textures.eyebrows, 0, 0);
+    this.mouth = new Option(this, this.textures.mouth, 0, 0);
+    this.outfit = new Option(this, [this.textures['outfit-1'], this.textures['base']], 0, 0);
+
+    //Add the dress up elements to the array
+    this.dressUpElements = [this.outfit, this.face, this.eyes, this.eyebrows, this.mouth];
+
+    //Create the buttons
+    this.createButton( this.textures.eyebrowsBtn, 10, this.eyebrows);
+    this.createButton( this.textures.eyesBtn, 121, this.eyes);
+    this.createButton( this.textures.mouthBtn, 232, this.mouth);
+    this.createButton( this.textures.outfitBtn, 343, this.outfit);
+
+
+    //Add to the stage.
+    this.addChild(this.background);
+    this.addChild(this.face);
+
+    for(var i = 0; i < this.dressUpElements.length; i++) {
+    	this.addChild( this.dressUpElements[i] );
+    }
+
+    for(var i = 0; i < this.buttons.length; i++) {
+    	this.addChild( this.buttons[i] );
+    }
 }
+
+
+//Handles the creation of a button to switch the dressup item
+Dude.createButton = function(btnTexture, y, dressUpItem) {
+	var ele = new Kiwi.GameObjects.Sprite(this, btnTexture, 10, y);
+	this.buttons.push(ele);
+	ele.input.onUp.add(dressUpItem.next, dressUpItem);
+}
+
+
+//This custom 
+Dude.createCustomButtons = function() {
+	//Call the Play states createCustomButtons method, this will ensure that the buttons are created still.
+	Play.prototype.createCustomButtons.call(this);
+
+	//Apply input events to the next and previous buttons
+	this.nextButton.input.onUp.add(function() {
+		this.game.states.switchState('Dog');
+	}, this);
+
+
+	this.prevButton.input.onUp.add(function() {
+		this.game.states.switchState('Zoe');
+	}, this);
+}
+
 /**
 * The Loading State is used to load in all of the GLOBAL in-game assets that we need in game.
 * GLOBAL assets are the type of assets that we want to always be in the game, because they are used so often.
@@ -549,8 +720,8 @@ MainLoader.preload = function () {
     this.addSpriteSheet('randomBtn', 'assets/img/buttons/randomBtn.png', 100, 100);
     this.addSpriteSheet('resetBtn', 'assets/img/buttons/resetBtn.png', 100, 100);
 
-    this.addSpriteSheet('nextBtn', 'assets/img/buttons/nextBtn.png', 63, 63);
-    this.addSpriteSheet('prevBtn', 'assets/img/buttons/prevBtn.png', 63, 63);
+    this.addSpriteSheet('nextBtn', 'assets/img/buttons/nextBtn.png', 126, 126);
+    this.addSpriteSheet('prevBtn', 'assets/img/buttons/prevBtn.png', 126, 126);
 
     this.addSpriteSheet('backBtn', 'assets/img/buttons/backBtn.png', 100, 100);
     this.addSpriteSheet('printBtn', 'assets/img/buttons/printBtn.png', 100, 100);
@@ -655,6 +826,7 @@ Zoe.preload = function() {
 
 }
 
+
 Zoe.loadComplete = function() {
 	Play.prototype.loadComplete.call(this);
 
@@ -664,6 +836,8 @@ Zoe.loadComplete = function() {
 	this.background.visible = false;
 }
 
+
+//Controls the creation the dressup elements and the buttons to control them.
 Zoe.createDressup = function() {
 
     //Create the background. 
@@ -719,12 +893,34 @@ Zoe.createDressup = function() {
     }
 }
 
+
 //Handles the creation of a button to switch the dressup item
 Zoe.createButton = function(btnTexture, y, dressUpItem) {
 	var ele = new Kiwi.GameObjects.Sprite(this, btnTexture, 10, y);
 	this.buttons.push(ele);
 	ele.input.onUp.add(dressUpItem.next, dressUpItem);
 }
+
+
+//This custom 
+Zoe.createCustomButtons = function() {
+	//Call the Play states createCustomButtons method, this will ensure that the buttons are created still.
+	Play.prototype.createCustomButtons.call(this);
+
+	//Apply input events to the next and previous buttons
+	this.nextButton.input.onUp.add(function() {
+		this.game.states.switchState('Dude');
+	}, this);
+
+
+	this.prevButton.input.onUp.add(function() {
+		this.game.states.switchState('ZoeFriend');
+	}, this);
+}
+
+
+
+
 
 
 
@@ -748,19 +944,104 @@ ZoeFriend.preload = function() {
 	this.addImage('outfit-2', 'assets/img/character/zoefriend/outfit/1.png', false);
 	this.addImage('outfit-3', 'assets/img/character/zoefriend/outfit/2.png', false);
 	
+	//Create the background
+	this.background = new Kiwi.GameObjects.StaticImage(this, this.textures['zoefriend-bg']);
+	this.addChild(this.background);
+
 	//Called after we have loaded our assets	
 	Play.prototype.preload.call(this);
 
 }
 
+
+ZoeFriend.loadComplete = function() {
+	Play.prototype.loadComplete.call(this);
+
+	//When the loading has been completed, we need to destory the background and re-create it in the create stage.
+	//This is because after the loadComplete method executes, Kiwi then remakes the texture library and that process will destory any currently used images.
+	this.background.exists = false;
+	this.background.visible = false;
+}
+
+
+//Controls the creation the dressup elements and the buttons to control them.
 ZoeFriend.createDressup = function() {
 
     //Create the background. 
-    //In this example we do not have a background, so we will skip this step.
-    this.background = new Kiwi.GameObjects.StaticImage(this, this.textures.bg, 0, 0);
-    this.addChild(this.background);
+    this.background = new Kiwi.GameObjects.StaticImage(this, this.textures['zoefriend-bg'], 0, 0);
 
+
+    //We are going to store all of the dress up parts inside this array, to keep track of them.
+    this.dressUpElements = [];
+    this.buttons = [];
+
+    //Changable Items
+    this.face = new Option(this, this.textures.face, 0, 0);
+    this.eyes = new Option(this, this.textures.eyes, 340, 320);
+    this.eyebrows = new Option(this, this.textures.eyebrows, 0, 20);
+    this.hair = new Option(this, [
+    	this.textures['hair-1'],
+    	this.textures['hair-2']
+    	], 135, 110);
+    this.mouth = new Option(this, this.textures.mouth, 370, 420);
+    this.nose = new Option(this, this.textures.nose, 0, 0);
+    this.outfit = new Option(this, [this.textures['outfit-1'], 
+    	this.textures['outfit-2'],
+    	this.textures['outfit-3']
+    	], 0, 0);
+
+    //Add the dress up elements to the array
+    this.dressUpElements = [this.outfit, this.face, this.eyes, this.eyebrows, this.hair, this.nose, this.mouth];
+
+    //Create the buttons
+    this.createButton( this.textures.hairBtn, 10, this.hair);
+    this.createButton( this.textures.eyebrowsBtn, 121, this.eyebrows);
+    this.createButton( this.textures.eyesBtn, 232, this.eyes);
+    this.createButton( this.textures.noseBtn, 343, this.nose);
+    this.createButton( this.textures.mouthBtn, 454, this.mouth);
+    this.createButton( this.textures.outfitBtn, 565, this.outfit);
+
+
+    //Add to the stage.
+    this.addChild(this.background);
+    this.addChild(this.face);
+
+    for(var i = 0; i < this.dressUpElements.length; i++) {
+    	this.addChild( this.dressUpElements[i] );
+    }
+
+    for(var i = 0; i < this.buttons.length; i++) {
+    	this.addChild( this.buttons[i] );
+    }
 }
+
+
+//Handles the creation of a button to switch the dressup item
+ZoeFriend.createButton = function(btnTexture, y, dressUpItem) {
+	var ele = new Kiwi.GameObjects.Sprite(this, btnTexture, 10, y);
+	this.buttons.push(ele);
+	ele.input.onUp.add(dressUpItem.next, dressUpItem);
+}
+
+
+//This custom 
+ZoeFriend.createCustomButtons = function() {
+	//Call the Play states createCustomButtons method, this will ensure that the buttons are created still.
+	Play.prototype.createCustomButtons.call(this);
+
+	//Apply input events to the next and previous buttons
+	this.nextButton.input.onUp.add(function() {
+		this.game.states.switchState('Zoe');
+	}, this);
+
+
+	this.prevButton.input.onUp.add(function() {
+		this.game.states.switchState('Dog');
+	}, this);
+}
+
+
+
 
 /**
 * The core Dress-up blueprint game file.

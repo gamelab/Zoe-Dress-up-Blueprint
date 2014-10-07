@@ -29,6 +29,7 @@ Zoe.preload = function() {
 
 }
 
+
 Zoe.loadComplete = function() {
 	Play.prototype.loadComplete.call(this);
 
@@ -38,6 +39,8 @@ Zoe.loadComplete = function() {
 	this.background.visible = false;
 }
 
+
+//Controls the creation the dressup elements and the buttons to control them.
 Zoe.createDressup = function() {
 
     //Create the background. 
@@ -93,11 +96,33 @@ Zoe.createDressup = function() {
     }
 }
 
+
 //Handles the creation of a button to switch the dressup item
 Zoe.createButton = function(btnTexture, y, dressUpItem) {
 	var ele = new Kiwi.GameObjects.Sprite(this, btnTexture, 10, y);
 	this.buttons.push(ele);
 	ele.input.onUp.add(dressUpItem.next, dressUpItem);
 }
+
+
+//This custom 
+Zoe.createCustomButtons = function() {
+	//Call the Play states createCustomButtons method, this will ensure that the buttons are created still.
+	Play.prototype.createCustomButtons.call(this);
+
+	//Apply input events to the next and previous buttons
+	this.nextButton.input.onUp.add(function() {
+		this.game.states.switchState('Dude');
+	}, this);
+
+
+	this.prevButton.input.onUp.add(function() {
+		this.game.states.switchState('ZoeFriend');
+	}, this);
+}
+
+
+
+
 
 

@@ -119,6 +119,20 @@ Play.prototype.createCustomButtons = function() {
     this.showButton = new Kiwi.GameObjects.Sprite(this, this.textures.cameraBtn, 444, 914);
     this.addChild(this.showButton);
     this.showButton.input.onUp.add(this.showSaveButtons, this);
+
+
+    //Previous/Next Button
+    this.prevButton = new Kiwi.GameObjects.Sprite(this, this.textures.prevBtn, 0, 0);
+    this.nextButton = new Kiwi.GameObjects.Sprite(this, this.textures.nextBtn, 0, 0);
+
+    this.prevButton.y = this.game.stage.height - this.prevButton.height - 10;
+    this.nextButton.y = this.game.stage.height - this.nextButton.height - 10;
+
+    this.prevButton.x = 10;
+    this.nextButton.x = this.game.stage.width - this.nextButton.width - 10;
+
+    this.addChild(this.prevButton);
+    this.addChild(this.nextButton);
 }
 
 
@@ -162,6 +176,11 @@ Play.prototype.showCreateButtons = function() {
     this.showButton.active = true;
     this.showButton.visible = true;
 
+    this.nextButton.visible = true;
+    this.prevButton.visible = true;
+    this.nextButton.active = true;
+    this.prevButton.active = true;
+
     //Show the current buttons
     this.printButton.visible = false;
     this.printButton.active = false;
@@ -185,6 +204,11 @@ Play.prototype.showSaveButtons = function(show) {
     this.resetButton.visible = false;
     this.showButton.active = false;
     this.showButton.visible = false;
+
+    this.nextButton.visible = false;
+    this.prevButton.visible = false;
+    this.nextButton.active = false;
+    this.prevButton.active = false;
 
     //Show the current buttons
     this.printButton.visible = true;

@@ -35,8 +35,8 @@ MainLoader.preload = function () {
     this.addSpriteSheet('randomBtn', 'assets/img/buttons/randomBtn.png', 100, 100);
     this.addSpriteSheet('resetBtn', 'assets/img/buttons/resetBtn.png', 100, 100);
 
-    this.addSpriteSheet('nextBtn', 'assets/img/buttons/nextBtn.png', 63, 63);
-    this.addSpriteSheet('prevBtn', 'assets/img/buttons/prevBtn.png', 63, 63);
+    this.addSpriteSheet('nextBtn', 'assets/img/buttons/nextBtn.png', 126, 126);
+    this.addSpriteSheet('prevBtn', 'assets/img/buttons/prevBtn.png', 126, 126);
 
     this.addSpriteSheet('backBtn', 'assets/img/buttons/backBtn.png', 100, 100);
     this.addSpriteSheet('printBtn', 'assets/img/buttons/printBtn.png', 100, 100);
