@@ -50,35 +50,35 @@ ZoeFriend.createDressup = function() {
     this.buttons = [];
 
     //Changable Items
-    this.face = new Option(this, this.textures.face, 0, 0);
-    this.eyes = new Option(this, this.textures.eyes, 340, 320);
-    this.eyebrows = new Option(this, this.textures.eyebrows, 0, 20);
-    this.hair = new Option(this, [
+    var face = new Option(this, this.textures.face, 0, 0);
+    var eyes = new Option(this, this.textures.eyes, 340, 320);
+    var eyebrows = new Option(this, this.textures.eyebrows, 0, 20);
+    var hair = new Option(this, [
     	this.textures['hair-1'],
     	this.textures['hair-2']
     	], 135, 110);
-    this.mouth = new Option(this, this.textures.mouth, 370, 420);
-    this.nose = new Option(this, this.textures.nose, 0, 0);
-    this.outfit = new Option(this, [this.textures['outfit-1'], 
+    var mouth = new Option(this, this.textures.mouth, 370, 420);
+    var nose = new Option(this, this.textures.nose, 0, 0);
+    var outfit = new Option(this, [this.textures['outfit-1'], 
     	this.textures['outfit-2'],
     	this.textures['outfit-3']
     	], 0, 0);
 
     //Add the dress up elements to the array
-    this.dressUpElements = [this.outfit, this.face, this.eyes, this.eyebrows, this.hair, this.nose, this.mouth];
+    this.dressUpElements = [outfit, face, eyes, eyebrows, hair, nose, mouth];
 
     //Create the buttons
-    this.createButton( this.textures.hairBtn, 10, this.hair);
-    this.createButton( this.textures.eyebrowsBtn, 121, this.eyebrows);
-    this.createButton( this.textures.eyesBtn, 232, this.eyes);
-    this.createButton( this.textures.noseBtn, 343, this.nose);
-    this.createButton( this.textures.mouthBtn, 454, this.mouth);
-    this.createButton( this.textures.outfitBtn, 565, this.outfit);
+    this.createButton( this.textures.hairBtn, 10, hair);
+    this.createButton( this.textures.eyebrowsBtn, 121, eyebrows);
+    this.createButton( this.textures.eyesBtn, 232, eyes);
+    this.createButton( this.textures.noseBtn, 343, nose);
+    this.createButton( this.textures.mouthBtn, 454, mouth);
+    this.createButton( this.textures.outfitBtn, 565, outfit);
 
 
     //Add to the stage.
     this.addChild(this.background);
-    this.addChild(this.face);
+    this.addChild(face);
 
     for(var i = 0; i < this.dressUpElements.length; i++) {
     	this.addChild( this.dressUpElements[i] );
@@ -113,5 +113,6 @@ ZoeFriend.createCustomButtons = function() {
 		this.game.states.switchState('Dog');
 	}, this);
 }
+
 
 

@@ -46,25 +46,25 @@ Dude.createDressup = function() {
     this.buttons = [];
 
     //Changable Items
-    this.face = new Option(this, this.textures.face, 0, 0);
-    this.eyes = new Option(this, this.textures.eyes, 0, 0);
-    this.eyebrows = new Option(this, this.textures.eyebrows, 0, 0);
-    this.mouth = new Option(this, this.textures.mouth, 0, 0);
-    this.outfit = new Option(this, [this.textures['outfit-1'], this.textures['base']], 0, 0);
+    var face = new Option(this, this.textures.face, 0, 0);
+    var eyes = new Option(this, this.textures.eyes, 0, 0);
+    var eyebrows = new Option(this, this.textures.eyebrows, 0, 0);
+    var mouth = new Option(this, this.textures.mouth, 0, 0);
+    var outfit = new Option(this, [this.textures['outfit-1'], this.textures['base']], 0, 0);
 
     //Add the dress up elements to the array
-    this.dressUpElements = [this.outfit, this.face, this.eyes, this.eyebrows, this.mouth];
+    this.dressUpElements = [outfit, face, eyes, eyebrows, mouth];
 
     //Create the buttons
-    this.createButton( this.textures.eyebrowsBtn, 10, this.eyebrows);
-    this.createButton( this.textures.eyesBtn, 121, this.eyes);
-    this.createButton( this.textures.mouthBtn, 232, this.mouth);
-    this.createButton( this.textures.outfitBtn, 343, this.outfit);
+    this.createButton( this.textures.eyebrowsBtn, 10, eyebrows);
+    this.createButton( this.textures.eyesBtn, 121, eyes);
+    this.createButton( this.textures.mouthBtn, 232, mouth);
+    this.createButton( this.textures.outfitBtn, 343, outfit);
 
 
     //Add to the stage.
     this.addChild(this.background);
-    this.addChild(this.face);
+    this.addChild( face);
 
     for(var i = 0; i < this.dressUpElements.length; i++) {
     	this.addChild( this.dressUpElements[i] );

@@ -11,7 +11,8 @@
 //Create some gameoptions
 var gameoptions = {
 	width: 768,
-	height: 1024
+	height: 1024, 
+	scaleType: Kiwi.Stage.SCALE_FIT
 }
 
 
