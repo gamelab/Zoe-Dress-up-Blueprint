@@ -2,15 +2,14 @@ var ZoeFriend = new Play('ZoeFriend');
 
 ZoeFriend.preload = function() {
 
-	this.addImage('bg', 'assets/img/character/zoefriend/bg.png', false);
 
 	//ZoeFriend Graphics
 	this.addImage('face', 'assets/img/character/zoefriend/face.png', false);
 
-	this.addSpriteSheet('eyebrows', 'assets/img/character/zoefriend/eyebrows.png', 524, 338, false);
+	this.addSpriteSheet('eyebrows', 'assets/img/character/zoefriend/eyebrows.png', 524, 338, false, 7);
 	this.addSpriteSheet('eyes', 'assets/img/character/zoefriend/eyes.png', 177, 77, false);
-	this.addSpriteSheet('hair-1', 'assets/img/character/zoefriend/hair-1.png', 631, 522, false);
-	this.addSpriteSheet('hair-2', 'assets/img/character/zoefriend/hair-2.png', 631, 522, false);
+	this.addSpriteSheet('hair-1', 'assets/img/character/zoefriend/hair1.png', 631, 522, false);
+	this.addSpriteSheet('hair-2', 'assets/img/character/zoefriend/hair2.png', 631, 522, false, 7);
 	this.addSpriteSheet('mouth', 'assets/img/character/zoefriend/mouth.png', 102, 65, false);
 	this.addSpriteSheet('nose', 'assets/img/character/zoefriend/nose.png', 443, 418, false);
 

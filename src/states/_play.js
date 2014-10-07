@@ -104,19 +104,19 @@ Play.prototype.createDressup = function() {
 Play.prototype.createCustomButtons = function() {
 
     //Create the 'random' button with an event listener for when it is clicked
-    this.randomButton = new Kiwi.GameObjects.Sprite(this, this.textures.randomBtn, 0, 289);
+    this.randomButton = new Kiwi.GameObjects.Sprite(this, this.textures.randomBtn, 224, 914);
     this.addChild(this.randomButton);
     this.randomButton.input.onUp.add(this.randomizeCharacter, this);
     
 
     //Create the 'reset' button with an event listener for when it is clicked
-    this.resetButton = new Kiwi.GameObjects.Sprite(this, this.textures.resetBtn, 118, 289);
+    this.resetButton = new Kiwi.GameObjects.Sprite(this, this.textures.resetBtn, 334, 914);
     this.addChild(this.resetButton);
     this.resetButton.input.onUp.add(this.resetCharacter, this);
     
 
     //Create the 'camera' button with an event listener for when it is clicked
-    this.showButton = new Kiwi.GameObjects.Sprite(this, this.textures.cameraBtn, 235, 289);
+    this.showButton = new Kiwi.GameObjects.Sprite(this, this.textures.cameraBtn, 444, 914);
     this.addChild(this.showButton);
     this.showButton.input.onUp.add(this.showSaveButtons, this);
 }
@@ -127,19 +127,19 @@ Play.prototype.createCustomButtons = function() {
 Play.prototype.createSaveButtons = function() {
 
     //Display the print button
-    this.printButton = new Kiwi.GameObjects.Sprite(this, this.textures.printBtn, 0, 289);
+    this.printButton = new Kiwi.GameObjects.Sprite(this, this.textures.printBtn, 224, 914);
     this.printButton.visible = false;
     this.printButton.active = false;
     this.addChild(this.printButton);
 
     //Display the save button
-    this.saveButton = new Kiwi.GameObjects.Sprite(this, this.textures.saveBtn, 118, 289);
+    this.saveButton = new Kiwi.GameObjects.Sprite(this, this.textures.saveBtn, 334, 914);
     this.saveButton.visible = false;
     this.saveButton.active = false;
     this.addChild(this.saveButton);
 
     //Display the back button
-    this.backButton = new Kiwi.GameObjects.Sprite(this, this.textures.backBtn, 235, 289);
+    this.backButton = new Kiwi.GameObjects.Sprite(this, this.textures.backBtn, 444, 914);
     this.backButton.visible = false;
     this.backButton.active = false;
     this.addChild(this.backButton);

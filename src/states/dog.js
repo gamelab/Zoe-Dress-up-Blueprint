@@ -2,7 +2,6 @@ var Dog = new Play('Dog');
 
 Dog.preload = function() {
 
-	this.addImage('bg', 'assets/img/character/dog/bg.png', false);
 
 	//Dog Graphics
 	this.addImage('face', 'assets/img/character/dog/face.png', false);

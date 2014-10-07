@@ -43,16 +43,25 @@ MainLoader.preload = function () {
     this.addSpriteSheet('saveBtn', 'assets/img/buttons/saveBtn.png', 100, 100);
     
     //
-    this.addSpriteSheet('eyebrows', 'assets/img/buttons/eyebrowsBtn.png', 101, 101);
-    this.addSpriteSheet('eyes', 'assets/img/buttons/eyesBtn.png', 101, 101);
-    this.addSpriteSheet('glasses', 'assets/img/buttons/glassesBtn.png', 101, 101);
-    this.addSpriteSheet('hair', 'assets/img/buttons/hairBtn.png', 101, 101);
-    this.addSpriteSheet('mouth', 'assets/img/buttons/mouthBtn.png', 101, 101);
-    this.addSpriteSheet('nose', 'assets/img/buttons/noseBtn.png', 101, 101);
+    this.addSpriteSheet('eyebrowsBtn', 'assets/img/buttons/eyebrowsBtn.png', 101, 101);
+    this.addSpriteSheet('eyesBtn', 'assets/img/buttons/eyesBtn.png', 101, 101);
+    this.addSpriteSheet('glassesBtn', 'assets/img/buttons/glassesBtn.png', 101, 101);
+    this.addSpriteSheet('hairBtn', 'assets/img/buttons/hairBtn.png', 101, 101);
+    this.addSpriteSheet('mouthBtn', 'assets/img/buttons/mouthBtn.png', 101, 101);
+    this.addSpriteSheet('noseBtn', 'assets/img/buttons/noseBtn.png', 101, 101);
+    this.addSpriteSheet('outfitBtn', 'assets/img/buttons/outfitBtn.png', 101, 101);
     
     
     //Load in the main menu assets 
     this.addImage('menu', 'assets/img/menu/start.png');
+
+    //While we are here, we will load in a few of the backgrounds.
+    //This way the user can see a nice background whilst loading is happening.
+
+    this.addImage('zoe-bg', 'assets/img/character/zoe/bg.png');
+    this.addImage('zoefriend-bg', 'assets/img/character/zoefriend/bg.png');
+    this.addImage('dude-bg', 'assets/img/character/dude/bg.png');
+    this.addImage('dog-bg', 'assets/img/character/dog/bg.png');
 
     //Load in the 'spinner' assets, which are displayed whilst loading is happening on the Play State.
     this.addImage('spinnerBackground', 'assets/img/spinner/spinnerSquare.png');

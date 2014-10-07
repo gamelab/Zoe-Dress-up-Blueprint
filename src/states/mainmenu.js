@@ -11,7 +11,7 @@
 var MainMenu = new Kiwi.State('MainMenu');
 
 
-MainMenu.create = function () {
+MainMenu.create = function() {
 
 	this.background = new Kiwi.GameObjects.StaticImage(this, this.textures.menu, 0, 0);
 	this.addChild(this.background);
@@ -25,6 +25,6 @@ MainMenu.startGame = function() {
 
 	this.game.stage.color = 'fff';
     //This state is currently skipped, but can be used as a main menu page.
-    this.game.states.switchState("Play");
+    this.game.states.switchState("Zoe");
 
 }

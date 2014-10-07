@@ -5,13 +5,19 @@
 * 
 */
 
-var Option = function(state, texture, ex, ey) {
+var Option = function(state, textures, ex, ey) {
+
+	if(Kiwi.Utils.Common.isArray(textures)) {
+		this.textures = textures;
+	} else {
+		this.textures = [textures];
+	}
 	
-	Kiwi.GameObjects.Sprite.call(this, state, texture, ex, ey);
+	Kiwi.GameObjects.StaticImage.call(this, state, this.textures[0], ex, ey);
 
 }
 
-Kiwi.extend(Option, Kiwi.GameObjects.Sprite);
+Kiwi.extend(Option, Kiwi.GameObjects.StaticImage);
 
 
 //Resets this option to the first frame.
@@ -20,24 +26,89 @@ Option.prototype.reset = function() {
 }
 
 
+//Because of a current bug with Kiwi (where setting the number of cells a spritesheet has doesn't work)
+//We have to implement this little system which will use the number of cells if it exists (it only exists if it is a spritesheet)
+//Otherwise it uses the length of the cell field.
+Option.prototype.getLength = function() {
+	return this.atlas.numCells || this.atlas.cells.length;
+}
+
+
+
 //Makes the element go to the next frame.
 //This would be when a user wants to go to the next clothing item, e.t.c.
 Option.prototype.next = function() {
-	this.animation.nextFrame();
+
+	// Go to the next frame in this current texture. If it fails, then go to the next texture atlas.
+	if( this.nextFrame() == false) { 
+
+		var nextAtlas = this.textures.indexOf(this.atlas) + 1;
+
+		//Go back to the start if we exceed the length
+		if(nextAtlas >= this.textures.length) nextAtlas = 0;
+
+		this.atlas = this.textures[ nextAtlas ];
+		this.cellIndex = 0;
+	}
+
+}
+
+Option.prototype.nextFrame = function() {
+
+	//If we increased the cellIndex by one and the number of cells in this atlas is still less than that amount
+	//Then there is another cell to switch to!
+	if( this.cellIndex + 1 < this.getLength() ) {
+		this.cellIndex++;
+		return true;
+	}
+
+	//otherwise not.
+	return false;
+
 }
 
 
 //Makes the element go to the previous frame
 //This would be when a user wants to go to the previous clothing item.
 Option.prototype.prev = function() {
-	this.animation.prevFrame();
+	
+	// Go to the previous frame in this current texture. If it fails, then go to the previous texture atlas.
+	if( this.prevFrame() == false) { 
+
+		var nextAtlas = this.textures.indexOf(this.atlas) - 1;
+
+		//Go to the end if we exceed the minimum value
+		if(nextAtlas < 0) nextAtlas = this.textures.length - 1;
+
+		this.atlas = this.textures[ nextAtlas ];
+		this.cellIndex = 0;
+	}
 }
+
+Option.prototype.prevFrame = function() {
+
+	//If we increased the cellIndex by one and the number of cells in this atlas is still less than that amount
+	//Then there is another cell to switch to!
+	if(this.cellIndex - 1 >= 0) {
+		this.cellIndex--;
+		return true;
+	}
+
+	//otherwise not.
+	return false;
+
+}
+
 
 
 //Choose a random piece of clothing.
 Option.prototype.randomize = function() {
 
-	this.cellIndex = this.game.rnd.integerInRange( 0, this.animation.length );
+	//Choose a random atlas
+	this.atlas = this.textures[ this.game.rnd.integerInRange( 0, this.textures.length ) ]; 
+
+	//Choose a random cell in that atlas
+	this.cellIndex = this.game.rnd.integerInRange( 0, this.getLength() );
 
 }
 
@@ -150,19 +221,19 @@ Play.prototype.createDressup = function() {
 Play.prototype.createCustomButtons = function() {
 
     //Create the 'random' button with an event listener for when it is clicked
-    this.randomButton = new Kiwi.GameObjects.Sprite(this, this.textures.randomBtn, 0, 289);
+    this.randomButton = new Kiwi.GameObjects.Sprite(this, this.textures.randomBtn, 224, 914);
     this.addChild(this.randomButton);
     this.randomButton.input.onUp.add(this.randomizeCharacter, this);
     
 
     //Create the 'reset' button with an event listener for when it is clicked
-    this.resetButton = new Kiwi.GameObjects.Sprite(this, this.textures.resetBtn, 118, 289);
+    this.resetButton = new Kiwi.GameObjects.Sprite(this, this.textures.resetBtn, 334, 914);
     this.addChild(this.resetButton);
     this.resetButton.input.onUp.add(this.resetCharacter, this);
     
 
     //Create the 'camera' button with an event listener for when it is clicked
-    this.showButton = new Kiwi.GameObjects.Sprite(this, this.textures.cameraBtn, 235, 289);
+    this.showButton = new Kiwi.GameObjects.Sprite(this, this.textures.cameraBtn, 444, 914);
     this.addChild(this.showButton);
     this.showButton.input.onUp.add(this.showSaveButtons, this);
 }
@@ -173,19 +244,19 @@ Play.prototype.createCustomButtons = function() {
 Play.prototype.createSaveButtons = function() {
 
     //Display the print button
-    this.printButton = new Kiwi.GameObjects.Sprite(this, this.textures.printBtn, 0, 289);
+    this.printButton = new Kiwi.GameObjects.Sprite(this, this.textures.printBtn, 224, 914);
     this.printButton.visible = false;
     this.printButton.active = false;
     this.addChild(this.printButton);
 
     //Display the save button
-    this.saveButton = new Kiwi.GameObjects.Sprite(this, this.textures.saveBtn, 118, 289);
+    this.saveButton = new Kiwi.GameObjects.Sprite(this, this.textures.saveBtn, 334, 914);
     this.saveButton.visible = false;
     this.saveButton.active = false;
     this.addChild(this.saveButton);
 
     //Display the back button
-    this.backButton = new Kiwi.GameObjects.Sprite(this, this.textures.backBtn, 235, 289);
+    this.backButton = new Kiwi.GameObjects.Sprite(this, this.textures.backBtn, 444, 914);
     this.backButton.visible = false;
     this.backButton.active = false;
     this.addChild(this.backButton);
@@ -388,7 +459,6 @@ var Dog = new Play('Dog');
 
 Dog.preload = function() {
 
-	this.addImage('bg', 'assets/img/character/dog/bg.png', false);
 
 	//Dog Graphics
 	this.addImage('face', 'assets/img/character/dog/face.png', false);
@@ -417,14 +487,13 @@ var Dude = new Play('Dude');
 
 Dude.preload = function() {
 
-	this.addImage('bg', 'assets/img/character/dude/bg.png', false);
 
 	//Dude Graphics
 	this.addImage('face', 'assets/img/character/dude/face.png', false);
 
 	this.addSpriteSheet('eyebrows', 'assets/img/character/dude/eyebrows.png', 488, 260, false);
-	this.addSpriteSheet('eyes', 'assets/img/character/dude/eyes.png', 491, 290, false);
-	this.addSpriteSheet('mouth', 'assets/img/character/dude/mouth.png', 491, 377, false);
+	this.addSpriteSheet('eyes', 'assets/img/character/dude/eyes.png', 491, 290, false, 5);
+	this.addSpriteSheet('mouth', 'assets/img/character/dude/mouth.png', 491, 377, false, 6);
 
 	//The Body
 	this.addImage('base', 'assets/img/character/dude/outfit/base.png', false);
@@ -488,16 +557,25 @@ MainLoader.preload = function () {
     this.addSpriteSheet('saveBtn', 'assets/img/buttons/saveBtn.png', 100, 100);
     
     //
-    this.addSpriteSheet('eyebrows', 'assets/img/buttons/eyebrowsBtn.png', 101, 101);
-    this.addSpriteSheet('eyes', 'assets/img/buttons/eyesBtn.png', 101, 101);
-    this.addSpriteSheet('glasses', 'assets/img/buttons/glassesBtn.png', 101, 101);
-    this.addSpriteSheet('hair', 'assets/img/buttons/hairBtn.png', 101, 101);
-    this.addSpriteSheet('mouth', 'assets/img/buttons/mouthBtn.png', 101, 101);
-    this.addSpriteSheet('nose', 'assets/img/buttons/noseBtn.png', 101, 101);
+    this.addSpriteSheet('eyebrowsBtn', 'assets/img/buttons/eyebrowsBtn.png', 101, 101);
+    this.addSpriteSheet('eyesBtn', 'assets/img/buttons/eyesBtn.png', 101, 101);
+    this.addSpriteSheet('glassesBtn', 'assets/img/buttons/glassesBtn.png', 101, 101);
+    this.addSpriteSheet('hairBtn', 'assets/img/buttons/hairBtn.png', 101, 101);
+    this.addSpriteSheet('mouthBtn', 'assets/img/buttons/mouthBtn.png', 101, 101);
+    this.addSpriteSheet('noseBtn', 'assets/img/buttons/noseBtn.png', 101, 101);
+    this.addSpriteSheet('outfitBtn', 'assets/img/buttons/outfitBtn.png', 101, 101);
     
     
     //Load in the main menu assets 
     this.addImage('menu', 'assets/img/menu/start.png');
+
+    //While we are here, we will load in a few of the backgrounds.
+    //This way the user can see a nice background whilst loading is happening.
+
+    this.addImage('zoe-bg', 'assets/img/character/zoe/bg.png');
+    this.addImage('zoefriend-bg', 'assets/img/character/zoefriend/bg.png');
+    this.addImage('dude-bg', 'assets/img/character/dude/bg.png');
+    this.addImage('dog-bg', 'assets/img/character/dog/bg.png');
 
     //Load in the 'spinner' assets, which are displayed whilst loading is happening on the Play State.
     this.addImage('spinnerBackground', 'assets/img/spinner/spinnerSquare.png');
@@ -529,7 +607,7 @@ MainLoader.preload = function () {
 var MainMenu = new Kiwi.State('MainMenu');
 
 
-MainMenu.create = function () {
+MainMenu.create = function() {
 
 	this.background = new Kiwi.GameObjects.StaticImage(this, this.textures.menu, 0, 0);
 	this.addChild(this.background);
@@ -543,22 +621,20 @@ MainMenu.startGame = function() {
 
 	this.game.stage.color = 'fff';
     //This state is currently skipped, but can be used as a main menu page.
-    this.game.states.switchState("Play");
+    this.game.states.switchState("Zoe");
 
 }
 var Zoe = new Play('Zoe');
 
 Zoe.preload = function() {
 
-	this.addImage('bg', 'assets/img/character/zoe/bg.png', false);
-
 	//Zoe Graphics
 	this.addImage('face', 'assets/img/character/zoe/face.png', false);
 
-	this.addSpriteSheet('eyebrows', 'assets/img/character/zoe/eyebrows.png', 447, 283, false);
-	this.addSpriteSheet('eyes', 'assets/img/character/zoe/eyes.png', 481, 304, false);
+	this.addSpriteSheet('eyebrows', 'assets/img/character/zoe/eyebrows.png', 477, 283, false, 6);
+	this.addSpriteSheet('eyes', 'assets/img/character/zoe/eyes.png', 481, 304, false, 10);
 	this.addSpriteSheet('glasses', 'assets/img/character/zoe/glasses.png', 510, 320, false);
-	this.addSpriteSheet('hair', 'assets/img/character/zoe/hair.png', 600, 377, false);
+	this.addSpriteSheet('hair', 'assets/img/character/zoe/hair.png', 600, 377, false, 3);
 	this.addSpriteSheet('mouth', 'assets/img/character/zoe/mouth.png', 75, 52, false);
 	this.addSpriteSheet('nose', 'assets/img/character/zoe/nose.png', 431, 351, false);
 
@@ -570,42 +646,100 @@ Zoe.preload = function() {
 	this.addImage('outfit-4', 'assets/img/character/zoe/outfit/3.png', false);
 	this.addImage('outfit-5', 'assets/img/character/zoe/outfit/4.png', false);
 	
+	//Create the background
+	this.background = new Kiwi.GameObjects.StaticImage(this, this.textures['zoe-bg']);
+	this.addChild(this.background);
+
 	//Called after we have loaded our assets	
 	Play.prototype.preload.call(this);
 
 }
 
+Zoe.loadComplete = function() {
+	Play.prototype.loadComplete.call(this);
+
+	//When the loading has been completed, we need to destory the background and re-create it in the create stage.
+	//This is because after the loadComplete method executes, Kiwi then remakes the texture library and that process will destory any currently used images.
+	this.background.exists = false;
+	this.background.visible = false;
+}
+
 Zoe.createDressup = function() {
 
     //Create the background. 
-    //In this example we do not have a background, so we will skip this step.
-    this.background = new Kiwi.GameObjects.StaticImage(this, this.textures.bg, 0, 0);
-    this.addChild(this.background);
-
-    //Create the background. 
-    //In this example we do not have a background, so we will skip this step.
+    this.background = new Kiwi.GameObjects.StaticImage(this, this.textures['zoe-bg'], 0, 0);
 
 
     //We are going to store all of the dress up parts inside this array, to keep track of them.
     this.dressUpElements = [];
-
     this.buttons = [];
 
+    //The Base
+    this.base = new Kiwi.GameObjects.StaticImage(this, this.textures.base, 0, 0);
 
+    //Changable Items
+    this.face = new Option(this, this.textures.face, 0, 0);
+    this.eyes = new Option(this, this.textures.eyes, 0, 0);
+    this.eyebrows = new Option(this, this.textures.eyebrows, 0, 0);
+    this.glasses = new Option(this, this.textures.glasses, 0, 0);
+    this.hair = new Option(this, this.textures.hair, 1, 0);
+    this.mouth = new Option(this, this.textures.mouth, 383, 335);
+    this.nose = new Option(this, this.textures.nose, 0, 0);
+    this.outfit = new Option(this, [this.textures['outfit-1'], 
+    	this.textures['outfit-2'],
+    	this.textures['outfit-3'],
+    	this.textures['outfit-4'],
+    	this.textures['outfit-5']
+    	], 0, 0);
+
+    //Add the dress up elements to the array
+    this.dressUpElements = [this.outfit, this.face, this.eyes, this.eyebrows, this.hair, this.nose, this.mouth, this.glasses];
+
+    //Create the buttons
+    this.createButton( this.textures.hairBtn, 10, this.hair);
+    this.createButton( this.textures.eyebrowsBtn, 121, this.eyebrows);
+    this.createButton( this.textures.glassesBtn, 232, this.glasses);
+    this.createButton( this.textures.eyesBtn, 343, this.eyes);
+    this.createButton( this.textures.noseBtn, 454, this.nose);
+    this.createButton( this.textures.mouthBtn, 565, this.mouth);
+    this.createButton( this.textures.outfitBtn, 676, this.outfit);
+
+
+    //Add to the stage.
+    this.addChild(this.background);
+    this.addChild(this.base);
+    this.addChild(this.face);
+
+    for(var i = 0; i < this.dressUpElements.length; i++) {
+    	this.addChild( this.dressUpElements[i] );
+    }
+
+    for(var i = 0; i < this.buttons.length; i++) {
+    	this.addChild( this.buttons[i] );
+    }
 }
+
+//Handles the creation of a button to switch the dressup item
+Zoe.createButton = function(btnTexture, y, dressUpItem) {
+	var ele = new Kiwi.GameObjects.Sprite(this, btnTexture, 10, y);
+	this.buttons.push(ele);
+	ele.input.onUp.add(dressUpItem.next, dressUpItem);
+}
+
+
+
 var ZoeFriend = new Play('ZoeFriend');
 
 ZoeFriend.preload = function() {
 
-	this.addImage('bg', 'assets/img/character/zoefriend/bg.png', false);
 
 	//ZoeFriend Graphics
 	this.addImage('face', 'assets/img/character/zoefriend/face.png', false);
 
-	this.addSpriteSheet('eyebrows', 'assets/img/character/zoefriend/eyebrows.png', 524, 338, false);
+	this.addSpriteSheet('eyebrows', 'assets/img/character/zoefriend/eyebrows.png', 524, 338, false, 7);
 	this.addSpriteSheet('eyes', 'assets/img/character/zoefriend/eyes.png', 177, 77, false);
-	this.addSpriteSheet('hair-1', 'assets/img/character/zoefriend/hair-1.png', 631, 522, false);
-	this.addSpriteSheet('hair-2', 'assets/img/character/zoefriend/hair-2.png', 631, 522, false);
+	this.addSpriteSheet('hair-1', 'assets/img/character/zoefriend/hair1.png', 631, 522, false);
+	this.addSpriteSheet('hair-2', 'assets/img/character/zoefriend/hair2.png', 631, 522, false, 7);
 	this.addSpriteSheet('mouth', 'assets/img/character/zoefriend/mouth.png', 102, 65, false);
 	this.addSpriteSheet('nose', 'assets/img/character/zoefriend/nose.png', 443, 418, false);
 
