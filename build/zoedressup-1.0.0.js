@@ -23,6 +23,7 @@ Kiwi.extend(Option, Kiwi.GameObjects.StaticImage);
 //Resets this option to the first frame.
 Option.prototype.reset = function() {
 	this.cellIndex = 0;
+	this.atlas = this.textures[0];
 }
 
 
